@@ -9,7 +9,7 @@
 
 HOME=`dirname "$(which $0)"`
 CMD="${HOME}/avchd2srt-core"
-DIR="$1"
+DIR="$*"
 
 [ $# -eq 0 ] && echo "Usage: $0 <path to *.MTS files>" && exit 1
 
@@ -25,9 +25,9 @@ for file in `find $DIR -type f -name '*.MTS'` ; do
         PRFX=$(awk 'NR==3 {print $2}' $srtfile | tr -d '\n')                 # cut the creating date from subtitles
         newname="`dirname ${file}`/`basename ${file%%.MTS}`_$PRFX"       # new filename without file suffix
         mv "$file" "$newname".MTS                                            # rename with date mark
-        HandBrakeCLI -i "$newname".MTS -o "$newname".mp4 -e x264 -q 22 -B 160 >/dev/null        # Converting MTS to mp4
-        touch -m -d "$PRX" "$newname".MTS
-        touch -m -d "$PRX" "$newname".mp4
+        HandBrakeCLI -i "$newname".MTS -o "$newname".mp4 -e x264 -q 22 -B 160 -d -8 >/dev/null        # Converting MTS to mp4
+        touch -m -d "$PRFX" "$newname".MTS
+        touch -m -d "$PRFX" "$newname".mp4
         rm -f $srtfile
     else
         echo "$srtfile was not created"
